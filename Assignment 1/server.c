@@ -53,9 +53,19 @@ int main(int argc, char const *argv[])
         perror("accept"); 
         exit(EXIT_FAILURE); 
     } 
-    valread = read( new_socket , buffer, 1024); 
-    printf("%s\n",buffer ); 
-    send(new_socket , hello , strlen(hello) , 0 ); 
-    printf("Hello message sent\n"); 
+    int newProcess= fork();
+    if(newProcess==0){ 
+        // setuid(124521);
+        printf("updated UID is: %d", setuid(65535));
+        valread = read( new_socket , buffer, 1024); 
+        printf("%s\n",buffer ); 
+        send(new_socket , hello , strlen(hello) , 0 ); 
+        printf("Hello message sent\n"); 
+    }else if(newProcess!=-1){
+        printf("Parent is waiting...\n");
+        wait(NULL);
+    }else{
+        perror("Error while calling the fork function");
+    }
     return 0; 
 } 
