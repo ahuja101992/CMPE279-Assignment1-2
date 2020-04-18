@@ -5,7 +5,7 @@
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <string.h> 
-#define PORT 8080 
+#define PORT 85
 int main(int argc, char const *argv[]) 
 { 
     int server_fd, new_socket, valread; 
@@ -22,11 +22,10 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE); 
     } 
        
-    // Forcefully attaching socket to the port 8080 
-    // if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
-    //                                               &opt, sizeof(opt))) /// removing coz of old linux kernal 
-        if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR , 
-                                                  &opt, sizeof(opt))) 
+    // Forcefully attaching socket to the port 80 
+     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, 
+                                                   &opt, sizeof(opt))) /// removing coz of old linux kernal 
+
     { 
         perror("setsockopt"); 
         exit(EXIT_FAILURE); 
@@ -55,15 +54,14 @@ int main(int argc, char const *argv[])
     } 
     int newProcess= fork();
     if(newProcess==0){ 
-        // setuid(124521);
-        printf("updated UID is: %d", setuid(65535));
+        setuid(65534);
+        printf("updated UID is   : %d", getuid());
         valread = read( new_socket , buffer, 1024); 
         printf("%s\n",buffer ); 
         send(new_socket , hello , strlen(hello) , 0 ); 
         printf("Hello message sent\n"); 
     }else if(newProcess!=-1){
         printf("Parent is waiting...\n");
-        wait(NULL);
     }else{
         perror("Error while calling the fork function");
     }
